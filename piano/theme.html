@@ -1,0 +1,184 @@
+<{php}>
+	// new_messages に新着PM数をアサインする
+	global $xoopsUser ;
+	if( is_object( $xoopsUser ) ) {
+		$pm_handler =& xoops_gethandler('privmessage');
+		$criteria = new CriteriaCompo(new Criteria('read_msg', 0));
+		$criteria->add(new Criteria('to_userid', $xoopsUser->getVar('uid')));
+		$new_messages = $pm_handler->getCount($criteria) ;
+		$this->assign( 'new_messages' , $new_messages ) ;
+		if( empty( $_SESSION['new_messages'] ) ) $_SESSION['new_messages'] = 0 ;
+		if( $_SESSION['new_messages'] < $new_messages ) $this->assign( 'open_message_alert' , 1 ) ;
+		$_SESSION['new_messages'] = $new_messages ;
+	} else {
+		$this->assign( 'new_messages' , 0 ) ;
+	}
+<{/php}>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<{$xoops_langcode}>" lang="<{$xoops_langcode}>">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=<{$xoops_charset}>" />
+<meta http-equiv="content-language" content="<{$xoops_langcode}>" />
+<meta name="robots" content="<{$xoops_meta_robots}>" />
+<meta name="keywords" content="<{$xoops_meta_keywords}>" />
+<meta name="description" content="<{$xoops_meta_description}>" />
+<meta name="rating" content="<{$xoops_meta_rating}>" />
+<meta name="author" content="<{$xoops_meta_author}>" />
+<meta name="copyright" content="<{$xoops_meta_copyright}>" />
+<meta name="generator" content="XOOPS" />
+<title><{$xoops_sitename}> - <{$xoops_pagetitle}></title>
+<link href="<{$xoops_url}>/favicon.ico" rel="SHORTCUT ICON" />
+<link rel="stylesheet" type="text/css" media="screen" href="<{$xoops_url}>/xoops.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="<{$xoops_themecss}>" />
+<!-- RMV: added module header -->
+<{$xoops_module_header}>
+<script type="text/javascript">
+<!--
+<{$xoops_js}>
+//-->
+</script>
+</head>
+<body>
+
+<table cellspacing="0" align="center" id="maintable">
+<tr>
+<td>
+
+	<table cellspacing="0" align="center" id="top">
+	<tr>
+	<td id="header">
+		<table border=0><tr>
+		<td class="search"><br />
+			<form action="<{$xoops_url}>/search.php" method="get">
+			<input type="text" name="query" size="20"/>
+			<input type="hidden" name="action" value="results" />
+			<input type="submit" name="searchSubmit" value="検索" />
+			</form>
+		</td></tr>
+		<tr><td class="userform">
+		<{if $xoops_isuser}>
+		<!--ユーザ用-->
+		<a href="<{$xoops_url}>/user.php?op=logout">ログアウト</a>&nbsp;|&nbsp;
+		<a href="<{$xoops_url}>/user.php">アカウント</a>&nbsp;|&nbsp;
+		<a href="<{$xoops_url}>/notifications.php">イベント通知</a>&nbsp;|&nbsp;
+		<a href="<{$xoops_url}>/viewpmsg.php">受信箱</a>(<{$new_messages}>) 
+		<{if $xoops_isadmin}>&nbsp;|&nbsp;<a href="<{$xoops_url}>/admin.php">管理</a> <{/if}>
+		<{else}>
+		<!--ゲスト用-->
+		<a href="<{$xoops_url}>/user.php">ログイン</a>
+		<{/if}>
+		</td>
+		</tr>
+		</table>
+	</td>
+	</tr>
+	</table>
+
+	<table cellspacing="0">
+	<tr>
+	<td class="menubar">
+		<a href="<{$xoops_url}>/">ホーム</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/news/">最新ニュース</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/newbb/">フォーラム</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/mydownloads/">ダウンロード</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/mylinks/">リンク集</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/xcgal/">ギャラリー</a>&nbsp;｜&nbsp;
+		<a href="<{$xoops_url}>/modules/contact/">お問い合わせ</a>
+	</td>
+	</tr>
+	</table>
+
+	<table cellspacing="0" align="center">
+	<tr>
+
+	<td id="leftcolumn">
+
+	<!-- Start left blocks loop -->
+	<{foreach item=block from=$xoops_lblocks}>
+		<table cellspacing="0">
+		<tr><td class="blockTitle">:: <{$block.title}></td></tr>
+		<tr><td class="blockContent"><{$block.content}></td></tr>
+		</table>
+	<{/foreach}>
+	<!-- End left blocks loop -->
+
+	</td>
+
+	<td id="centercolumn">
+
+	<!-- Display center blocks if any -->
+	<{if $xoops_showcblock == 1}>
+
+		<table cellspacing="0">
+		<tr>
+		<td id="centerCcolumn" colspan="2">
+
+		<!-- Start center-center blocks loop -->
+		<{foreach item=block from=$xoops_ccblocks}>
+		<div class="blockTitle"><{$block.title}></div>
+		<div class="blockContent"><{$block.content}></div>
+		<{/foreach}>
+		<!-- End center-center blocks loop -->
+
+		</td>
+		</tr>
+		<tr>
+		<td id="centerLcolumn">
+
+		<!-- Start center-left blocks loop -->
+		<{foreach item=block from=$xoops_clblocks}>
+		<div class="blockTitle"><{$block.title}></div>
+		<div class="blockContent"><{$block.content}></div>
+		<{/foreach}>
+		<!-- End center-left blocks loop -->
+
+		</td>
+		<td id="centerRcolumn">
+
+		<!-- Start center-right blocks loop -->
+		<{foreach item=block from=$xoops_crblocks}>
+		<div class="blockTitle"><{$block.title}></div>
+		<div class="blockContent"><{$block.content}></div>
+		<{/foreach}>
+		<!-- End center-right blocks loop -->
+
+		</td>
+		</tr>
+		</table>
+
+		<{/if}>
+		<!-- End display center blocks -->
+
+		<div id="content"><{$xoops_contents}></div>
+	</td>
+
+	<{if $xoops_showrblock == 1}>
+
+	<td id="rightcolumn">
+	<!-- Start right blocks loop -->
+	<{foreach item=block from=$xoops_rblocks}>
+		<table cellspacing="0">
+		<tr><td class="blockTitle">:: <{$block.title}></td></tr>
+		<tr><td class="blockContent"><{$block.content}></td></tr>
+		</table>
+		<{/foreach}>
+		<!-- End right blocks loop -->
+	</td>
+
+	<{/if}>
+
+	</tr>
+	</table>
+
+	<table align="center" cellspacing="0" id="footer">
+	<tr>
+	<td class="center"><{$xoops_footer}></td>
+	</tr>
+	</table>
+
+</td>
+</tr>
+</table>
+
+</body>
+</html>
